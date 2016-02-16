@@ -6,6 +6,8 @@
 
 ## Install
 
+You need to install `n` or `nvm` before using `testen`.
+
 ```
 $ npm install -g testen
 ```

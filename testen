@@ -19,7 +19,6 @@ var cli = minimist(process.argv.slice(2), {
 		h: 'help'
 	}
 })
-
 /**
  * Print help
  */
@@ -70,7 +69,8 @@ if (typeof cli.node === 'string') {
 cli.node.forEach(function (version) {
 	console.log(chalk.cyan('testing in node ' + version))
 	if (nvm) {
-		var test = child.spawnSync('nvm', ['exec', version].concat(command), {stdio: 'inherit'})
+		child.execSync('source ~/.nvm/nvm.sh && nvm install ' + version, {stdio: 'inherit'})
+		var test = child.spawnSync(command[0], command.slice(1), {stdio: 'inherit'})
 	} else {
 		child.spawnSync('n', [version], {stdio: 'inherit'})
 		var test = child.spawnSync(command[0], command.slice(1), {stdio: 'inherit'})
@@ -87,7 +87,9 @@ cli.node.forEach(function (version) {
 /**
  * Recover node version after test
  */
-if (!nvm) {
+if (nvm) {
+	child.spawnSync('nvm', ['use', nodeVersion], {stdio: 'inherit'})
+} else {
 	child.spawnSync('n', [nodeVersion], {stdio: 'inherit'})
 }
 
