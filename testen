@@ -19,7 +19,7 @@ update({pkg: pkg}).notify()
 
 var cli = minimist(process.argv.slice(2), {
 	'--': true,
-	alias: {
+	'alias': {
 		n: 'node',
 		h: 'help'
 	}
@@ -71,7 +71,7 @@ if (typeof cli.node === 'string') {
 }
 var msg = ''
 var result = cli.node.map(function (version) {
-	return ['  ' + chalk.gray(figures.circle), version,  chalk.gray('running')]
+	return ['  ' + chalk.gray(figures.circle), version, chalk.gray('running')]
 })
 logResult(result)
 cli.node.forEach(function (version, index) {
@@ -80,10 +80,10 @@ cli.node.forEach(function (version, index) {
 	handleError(setVersion)
 	var test = child.spawnSync(command[0], command.slice(1))
 	if (test.status === 1) {
-		result[index] = ['  ' + chalk.red(figures.cross), version,  chalk.red('failed')]
+		result[index] = ['  ' + chalk.red(figures.cross), version, chalk.red('failed')]
 		finalStatus = 1
 		msg += chalk.bold('error occurs when testing with Node ' + version) + '\n' +
-			test.stderr.toString()
+			(test.stderr.toString().trim() ? test.stdout.toString() : test.stdout.toString())
 		logResult(result)
 	} else {
 		result[index] = ['  ' + chalk.green(figures.tick), version, chalk.green('passed')]
@@ -122,9 +122,9 @@ function error(msg) {
  */
 function updateBadge() {
 	if (!cli['disable-badge'] && pathExists.sync('./README.md')) {
-		var badge = finalStatus === 0
-			? 'https://img.shields.io/badge/testen-passing-brightgreen.svg'
-			: 'https://img.shields.io/badge/testen-failed-red.svg'
+		var badge = finalStatus === 0 ?
+			'https://img.shields.io/badge/testen-passing-brightgreen.svg' :
+			'https://img.shields.io/badge/testen-failed-red.svg'
 		var content = fs.readFileSync('./README.md', 'utf8')
 		content = content.replace(
 			/!\[testen badge\]\([^.]*\)/g,

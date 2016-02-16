@@ -14,7 +14,8 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "test": "xo"
+    "test": "echo lol",
+    "testen": "testen -n 4.2.4 -n 5.6.0 -- npm test"
   },
   "files": [
     "testen"
@@ -35,13 +36,5 @@
     "path-exists": "^2.1.0",
     "text-table": "^0.2.0",
     "update-notifier": "^0.6.0"
-  },
-  "devDependencies": {
-    "ava": "^0.10.0",
-    "execa": "^0.2.2",
-    "xo": "^0.12.1"
-  },
-  "xo": {
-    "semicolon": false
   }
 }
