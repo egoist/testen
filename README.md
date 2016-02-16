@@ -1,4 +1,4 @@
-# testen [![NPM version](https://img.shields.io/npm/v/testen.svg)](https://npmjs.com/package/testen) [![NPM downloads](https://img.shields.io/npm/dm/testen.svg)](https://npmjs.com/package/testen) [![Build Status](https://img.shields.io/circleci/project/egoist/testen/master.svg)](https://circleci.com/gh/egoist/testen)
+# testen [![NPM version](https://img.shields.io/npm/v/testen.svg)](https://npmjs.com/package/testen) [![NPM downloads](https://img.shields.io/npm/dm/testen.svg)](https://npmjs.com/package/testen)
 
 > Run tests for multiple versions of Node.js in local env.
 
@@ -6,7 +6,7 @@
 
 ## Install
 
-You need to install `n` or `nvm` before using `testen`.
+You need to install `n` before using `testen`.
 
 ```
 $ npm install -g testen
@@ -16,9 +16,6 @@ $ npm install -g testen
 
 ```bash
 $ testen -n 0.12.0 -n 4.2.4 -n 5.6.0 -- ava
-
-# Using NVM instead of n?
-$ testen -n 0.12.0 --nvm -- ava
 ```
 
 ## CLI
@@ -30,7 +27,6 @@ Usage:
 
   --node/-n <version>:  Add a node version to test
   -- <command>:         The test command you expect
-  --nvm:                Test with NVM
 ```
 
 ## License

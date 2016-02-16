@@ -29,7 +29,6 @@ if (cli.help) {
 		'',
 		'  --node/-n <version>:  Add a node version to test',
 		'  -- <command>:         The test command you expect',
-		'  --nvm:                Test with NVM',
 		''
 	].join('\n'))
 	process.exit()
@@ -61,20 +60,14 @@ var nodeVersion = runNode.stdout.toString().substring(1)
  */
 var result = []
 var finalStatus = 0
-var nvm = cli.nvm
 // ensure `node versions` is an array
 if (typeof cli.node === 'string') {
 	cli.node = [cli.node]
 }
 cli.node.forEach(function (version) {
 	console.log(chalk.cyan('testing in node ' + version))
-	if (nvm) {
-		child.execSync('source ~/.nvm/nvm.sh && nvm install ' + version, {stdio: 'inherit'})
-		var test = child.spawnSync(command[0], command.slice(1), {stdio: 'inherit'})
-	} else {
-		child.spawnSync('n', [version], {stdio: 'inherit'})
-		var test = child.spawnSync(command[0], command.slice(1), {stdio: 'inherit'})
-	}
+	child.spawnSync('n', [version], {stdio: 'inherit'})
+	var test = child.spawnSync(command[0], command.slice(1), {stdio: 'inherit'})
 
 	if (test.status === 1) {
 		result.push('node ' + version + ' ' + chalk.red('failed'))
@@ -87,11 +80,7 @@ cli.node.forEach(function (version) {
 /**
  * Recover node version after test
  */
-if (nvm) {
-	child.spawnSync('nvm', ['use', nodeVersion], {stdio: 'inherit'})
-} else {
-	child.spawnSync('n', [nodeVersion], {stdio: 'inherit'})
-}
+child.spawnSync('n', [nodeVersion], {stdio: 'inherit'})
 
 /**
  * Log result
