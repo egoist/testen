@@ -69,9 +69,10 @@ if (typeof cli.node === 'string') {
 }
 cli.node.forEach(function (version) {
 	console.log(chalk.cyan('testing in node ' + version))
-	child.spawnSync('n', [version], {stdio: 'inherit'})
+	var setVersion = child.spawnSync('n', [version], {stdio: 'inherit'})
+	handleError(setVersion)
 	var test = child.spawnSync(command[0], command.slice(1), {stdio: 'inherit'})
-
+	handleError(test)
 	if (test.status === 1) {
 		result.push('node ' + version + ' ' + chalk.red('failed'))
 		finalStatus = 1
@@ -83,7 +84,10 @@ cli.node.forEach(function (version) {
 /**
  * Recover node version after test
  */
-child.spawnSync('n', [nodeVersion], {stdio: 'inherit'})
+recover()
+function recover() {
+	child.spawnSync('n', [nodeVersion], {stdio: 'inherit'})
+}
 
 /**
  * Log result
@@ -116,5 +120,15 @@ function updateBadge() {
 			'![testen badge](' + badge + ')'
 		)
 		fs.writeFileSync('./README.md', content, 'utf8')
+	}
+}
+
+/**
+ * Handle error
+ */
+function handleError(command) {
+	if (command.error) {
+		recover()
+		throw new Error(command.error)
 	}
 }
