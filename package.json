@@ -15,7 +15,7 @@
   },
   "scripts": {
     "test": "xo && ava",
-    "test:nvm": "xo && TEST_ENV=NVM ava"
+    "test:nvm": "xo && TEST_ENV=nvm ava"
   },
   "files": [
     "testen"
