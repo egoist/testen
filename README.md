@@ -1,6 +1,6 @@
-# testen [![NPM version](https://img.shields.io/npm/v/testen.svg)](https://npmjs.com/package/testen) [![NPM downloads](https://img.shields.io/npm/dm/testen.svg)](https://npmjs.com/package/testen)
+# testen [![NPM version](https://img.shields.io/npm/v/testen.svg)](https://npmjs.com/package/testen) [![NPM downloads](https://img.shields.io/npm/dm/testen.svg)](https://npmjs.com/package/testen) ![testen badge](https://img.shields.io/badge/testen-passing-brightgreen.svg)
 
-> Run tests for multiple versions of Node.js in local env.
+Run tests for multiple versions of Node.js in local env. And automatically update testen badge in your README after running tests.
 
 ![preview](https://ooo.0o0.ooo/2016/02/16/56c2dec030097.png)
 
@@ -25,8 +25,9 @@ $ testen --help
 
 Usage:
 
-  --node/-n <version>:  Add a node version to test
-  -- <command>:         The test command you expect
+	--node/-n <version>:  Add a node version to test
+	-- <command>:         The test command you expect
+	--disable-badge:      Disable auto-update testen badge
 ```
 
 ## License

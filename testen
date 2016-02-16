@@ -4,10 +4,12 @@
 /**
  * Module dependencies
  */
+var fs = require('fs')
 var minimist = require('minimist')
 var update = require('update-notifier')
 var chalk = require('chalk')
 var child = require('child_process')
+var pathExists = require('path-exists')
 var pkg = require('./package')
 
 update({pkg: pkg}).notify()
@@ -29,6 +31,7 @@ if (cli.help) {
 		'',
 		'  --node/-n <version>:  Add a node version to test',
 		'  -- <command>:         The test command you expect',
+		'  --disable-badge:      Disable auto-update testen badge',
 		''
 	].join('\n'))
 	process.exit()
@@ -88,6 +91,7 @@ child.spawnSync('n', [nodeVersion], {stdio: 'inherit'})
 if (!cli['hide-result']) {
 	console.log(result.join('\n'))
 }
+updateBadge()
 process.exit(finalStatus)
 
 /**
@@ -96,4 +100,21 @@ process.exit(finalStatus)
 function error(msg) {
 	console.log(chalk.red(msg))
 	process.exit()
+}
+
+/**
+ * Update badge
+ */
+function updateBadge() {
+	if (!cli['disable-badge'] && pathExists.sync('./README.md')) {
+		var badge = finalStatus === 0
+			? 'https://img.shields.io/badge/testen-passing-brightgreen.svg'
+			: 'https://img.shields.io/badge/testen-failed-red.svg'
+		var content = fs.readFileSync('./README.md', 'utf8')
+		content = content.replace(
+			/!\[testen badge\]\([^.]*\)/g,
+			'![testen badge](' + badge + ')'
+		)
+		fs.writeFileSync('./README.md', content, 'utf8')
+	}
 }
