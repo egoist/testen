@@ -1,0 +1,108 @@
+#!/usr/bin/env node
+'use strict'
+
+/**
+ * Module dependencies
+ */
+var meow = require('meow')
+var minimist = require('minimist')
+var update = require('update-notifier')
+var chalk = require('chalk')
+var child = require('child_process')
+var pkg = require('./package')
+
+update({pkg: pkg}).notify()
+
+var cli = minimist(process.argv.slice(2), {
+	'--': true,
+	alias: {
+		n: 'node',
+		h: 'help'
+	}
+})
+
+/**
+ * Print help
+ */
+if (cli.help) {
+	console.log([
+		'',
+		'Usage:',
+		'',
+		'  --node/-n <version>:  Add a node version to test',
+		'  -- <command>:         The test command you expect',
+		''
+	].join('\n'))
+	process.exit()
+}
+
+/**
+ * Ensure we got a command to excute
+ */
+var command = cli['--']
+if (command.length === 0) {
+	error('Require a command to excute!')
+}
+
+/**
+ * Ensure we got some node versions
+ */
+if (!cli.node || cli.node.length === 0) {
+	error('Require providing node versions!')
+}
+
+/**
+ * Get node version before test
+ */
+var runNode = child.spawnSync('node', ['-v'])
+var nodeVersion = runNode.stdout.toString().substring(1)
+
+/**
+ * Run test
+ */
+var result = []
+var finalStatus = 0
+var nvm = cli.nvm
+// ensure `node versions` is an array
+if (typeof cli.node === 'string') {
+	cli.node = [cli.node]
+}
+cli.node.forEach(function (version) {
+	console.log(chalk.cyan('testing in node ' + version))
+	if (nvm) {
+		var test = child.spawnSync('nvm', ['exec', version].concat(command), {stdio: 'inherit'})
+	} else {
+		child.spawnSync('n', [version], {stdio: 'inherit'})
+		var test = child.spawnSync(command[0], command.slice(1), {stdio: 'inherit'})
+	}
+
+	if (test.status === 1) {
+		result.push('node ' + version + ' ' + chalk.red('failed'))
+		finalStatus = 1
+	} else {
+		result.push('node ' + version + ' ' + chalk.green('passed'))
+	}
+})
+
+/**
+ * Recover node version after test
+ */
+if (!nvm) {
+	child.spawnSync('n', [nodeVersion], {stdio: 'inherit'})
+}
+
+/**
+ * Log result
+ */
+if (!cli['hide-result']) {
+	console.log(result.join('\n'))
+}
+process.exit(finalStatus)
+
+/**
+ * Error util
+ */
+function error(msg) {
+	console.log(chalk.red(msg))
+	process.exit()
+}

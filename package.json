@@ -1,0 +1,43 @@
+{
+  "name": "testen",
+  "version": "0.0.0",
+  "description": "Test JavaScript code in multi Node environments locally.",
+  "license": "MIT",
+  "repository": "egoist/testen",
+  "author": {
+    "name": "EGOIST",
+    "email": "0x142857@gmail.com",
+    "url": "github.com/egoist"
+  },
+  "bin": "testen",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "xo && ava"
+  },
+  "files": [
+    "testen"
+  ],
+  "keywords": [
+    "cli-app",
+    "cli",
+    "test",
+    "multi",
+    "n",
+    "nvm"
+  ],
+  "dependencies": {
+    "chalk": "^1.1.1",
+    "minimist": "^1.2.0",
+    "update-notifier": "^0.6.0"
+  },
+  "devDependencies": {
+    "ava": "^0.10.0",
+    "execa": "^0.2.2",
+    "xo": "^0.12.1"
+  },
+  "xo": {
+    "semicolon": false
+  }
+}
