@@ -10,6 +10,9 @@ var update = require('update-notifier')
 var chalk = require('chalk')
 var child = require('child_process')
 var pathExists = require('path-exists')
+var figures = require('figures')
+var log = require('log-update')
+var table = require('text-table')
 var pkg = require('./package')
 
 update({pkg: pkg}).notify()
@@ -61,23 +64,30 @@ var nodeVersion = runNode.stdout.toString().substring(1)
 /**
  * Run test
  */
-var result = []
 var finalStatus = 0
 // ensure `node versions` is an array
 if (typeof cli.node === 'string') {
 	cli.node = [cli.node]
 }
-cli.node.forEach(function (version) {
-	console.log(chalk.cyan('testing in node ' + version))
-	var setVersion = child.spawnSync('n', [version], {stdio: 'inherit'})
+var msg = ''
+var result = cli.node.map(function (version) {
+	return ['  ' + chalk.gray(figures.circle), version,  chalk.gray('running')]
+})
+logResult(result)
+cli.node.forEach(function (version, index) {
+	//console.log(chalk.cyan('testing in node ' + version))
+	var setVersion = child.spawnSync('n', [version])
 	handleError(setVersion)
-	var test = child.spawnSync(command[0], command.slice(1), {stdio: 'inherit'})
-	handleError(test)
+	var test = child.spawnSync(command[0], command.slice(1))
 	if (test.status === 1) {
-		result.push('node ' + version + ' ' + chalk.red('failed'))
+		result[index] = ['  ' + chalk.red(figures.cross), version,  chalk.red('failed')]
 		finalStatus = 1
+		msg += chalk.bold('error occurs when testing with Node ' + version) + '\n' +
+			test.stderr.toString()
+		logResult(result)
 	} else {
-		result.push('node ' + version + ' ' + chalk.green('passed'))
+		result[index] = ['  ' + chalk.green(figures.tick), version, chalk.green('passed')]
+		logResult(result)
 	}
 })
 
@@ -89,14 +99,15 @@ function recover() {
 	child.spawnSync('n', [nodeVersion], {stdio: 'inherit'})
 }
 
-/**
- * Log result
- */
-if (!cli['hide-result']) {
-	console.log(result.join('\n'))
-}
 updateBadge()
 process.exit(finalStatus)
+
+/**
+ * Log in table
+ */
+function logResult(res) {
+	log(msg + '\n' + table(res) + '\n')
+}
 
 /**
  * Error util
