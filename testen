@@ -30,6 +30,7 @@ if (cli.help) {
 		'',
 		'  --node/-n <version>:  Add a node version to test',
 		'  -- <command>:         The test command you expect',
+		'  --nvm:                Test with NVM',
 		''
 	].join('\n'))
 	process.exit()
