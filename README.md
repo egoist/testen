@@ -1,6 +1,6 @@
 # testen [![NPM version](https://img.shields.io/npm/v/testen.svg)](https://npmjs.com/package/testen) [![NPM downloads](https://img.shields.io/npm/dm/testen.svg)](https://npmjs.com/package/testen) [![Build Status](https://img.shields.io/circleci/project/egoist/testen/master.svg)](https://circleci.com/gh/egoist/testen)
 
-> Test JavaScript code in multi Node environments locally.
+> Run tests for multiple versions of Node.js in local env.
 
 ![preview](https://ooo.0o0.ooo/2016/02/16/56c2dec030097.png)
 

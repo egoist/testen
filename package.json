@@ -1,7 +1,7 @@
 {
   "name": "testen",
   "version": "0.0.2",
-  "description": "Test JavaScript code in multi Node environments locally.",
+  "description": "Run tests for multiple versions of Node.js in local env.",
   "license": "MIT",
   "repository": "egoist/testen",
   "author": {
