@@ -79,6 +79,7 @@ cli.node.forEach(function (version, index) {
 	var setVersion = child.spawnSync('n', [version])
 	handleError(setVersion)
 	var test = child.spawnSync(command[0], command.slice(1))
+	handleError(test)
 	if (test.status === 1) {
 		result[index] = ['  ' + chalk.red(figures.cross), version, chalk.red('failed')]
 		finalStatus = 1
@@ -140,6 +141,7 @@ function updateBadge() {
 function handleError(command) {
 	if (command.error) {
 		recover()
+		log.clear()
 		throw new Error(command.error)
 	}
 }
