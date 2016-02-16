@@ -14,7 +14,8 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "test": "xo && ava"
+    "test": "xo && ava",
+    "test:nvm": "xo && TEST_ENV=NVM ava"
   },
   "files": [
     "testen"
