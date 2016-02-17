@@ -30,6 +30,7 @@
   ],
   "dependencies": {
     "chalk": "^1.1.1",
+    "cross-spawn": "^2.1.5",
     "figures": "^1.4.0",
     "log-update": "^1.0.2",
     "minimist": "^1.2.0",

@@ -8,7 +8,7 @@ var fs = require('fs')
 var minimist = require('minimist')
 var update = require('update-notifier')
 var chalk = require('chalk')
-var child = require('child_process')
+var spawn = require('cross-spawn')
 var pathExists = require('path-exists')
 var figures = require('figures')
 var log = require('log-update')
@@ -49,7 +49,7 @@ var command = cli['--'].length === 0 ? ['npm', 'test'] : cli['--']
 /**
  * Get node version before test
  */
-var runNode = child.spawnSync('node', ['-v'])
+var runNode = spawn.sync('node', ['-v'])
 var nodeVersion = runNode.stdout.toString().substring(1).trim()
 
 /**
@@ -77,14 +77,14 @@ var result = useNodeVersion.map(function (version) {
 logResult(result)
 useNodeVersion.forEach(function (version, index) {
 	if (!useDefaultNode) {
-		var setVersion = child.spawnSync('n', [version])
+		var setVersion = spawn.sync('n', [version])
 		handleError(setVersion)
 	}
-	var test = child.spawnSync(command[0], command.slice(1))
+	var test = spawn.sync(command[0], command.slice(1))
 	handleError(test)
-	if (test.status === 1) {
+	if (test.status !== 0) {
 		result[index] = ['  ' + chalk.red(figures.cross), version, chalk.red('failed')]
-		finalStatus = 1
+		finalStatus = typeof test.status === 'number' ? test.status : 1
 		msg += chalk.bold('error occurs when testing with Node ' + version) + '\n' +
 			(test.stderr.toString().trim() ? test.stdout.toString() : test.stdout.toString())
 		logResult(result)
@@ -101,7 +101,7 @@ if (!useDefaultNode) {
 	recover()
 }
 function recover() {
-	child.spawnSync('n', [nodeVersion], {stdio: 'inherit'})
+	spawn.sync('n', [nodeVersion], {stdio: 'inherit'})
 }
 
 updateBadge()
