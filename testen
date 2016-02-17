@@ -32,7 +32,7 @@ if (cli.help) {
 		'',
 		'Usage:',
 		'',
-		'  --node/-n <version>:  Add a node version to test',
+		'  --node/-n [version]:  Add a node version to test',
 		'  -- [command]:         The test command you expect',
 		'  --disable-badge:      Disable auto-update testen badge',
 		''
@@ -47,35 +47,39 @@ if (cli.help) {
 var command = cli['--'].length === 0 ? ['npm', 'test'] : cli['--']
 
 /**
- * Ensure we got some node versions
- */
-if (!cli.node || cli.node.length === 0) {
-	error('Require providing node versions!')
-}
-
-/**
  * Get node version before test
  */
 var runNode = child.spawnSync('node', ['-v'])
-var nodeVersion = runNode.stdout.toString().substring(1)
+var nodeVersion = runNode.stdout.toString().substring(1).trim()
+
+/**
+ * Ensure we got some node versions
+ */
+var useDefaultNode = false
+var useNodeVersion = cli.node
+if (!useNodeVersion || useNodeVersion === 0) {
+	useNodeVersion = [nodeVersion]
+	useDefaultNode = true
+}
+// ensure `node versions` is an array
+if (typeof useNodeVersion === 'string') {
+	useNodeVersion = [cli.node]
+}
 
 /**
  * Run test
  */
 var finalStatus = 0
-// ensure `node versions` is an array
-if (typeof cli.node === 'string') {
-	cli.node = [cli.node]
-}
 var msg = ''
-var result = cli.node.map(function (version) {
+var result = useNodeVersion.map(function (version) {
 	return ['  ' + chalk.gray(figures.circle), version, chalk.gray('running')]
 })
 logResult(result)
-cli.node.forEach(function (version, index) {
-	//console.log(chalk.cyan('testing in node ' + version))
-	var setVersion = child.spawnSync('n', [version])
-	handleError(setVersion)
+useNodeVersion.forEach(function (version, index) {
+	if (!useDefaultNode) {
+		var setVersion = child.spawnSync('n', [version])
+		handleError(setVersion)
+	}
 	var test = child.spawnSync(command[0], command.slice(1))
 	handleError(test)
 	if (test.status === 1) {
@@ -93,7 +97,9 @@ cli.node.forEach(function (version, index) {
 /**
  * Recover node version after test
  */
-recover()
+if (!useDefaultNode) {
+	recover()
+}
 function recover() {
 	child.spawnSync('n', [nodeVersion], {stdio: 'inherit'})
 }
