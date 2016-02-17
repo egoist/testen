@@ -77,7 +77,7 @@ var result = useNodeVersion.map(function (version) {
 logResult(result)
 useNodeVersion.forEach(function (version, index) {
 	if (!useDefaultNode) {
-		var setVersion = spawn.sync('n', [version])
+		var setVersion = spawn.sync('n', [version], {stdio: 'inherit'})
 		handleError(setVersion)
 	}
 	var test = spawn.sync(command[0], command.slice(1))
