@@ -16,6 +16,7 @@ $ npm install -g testen
 ## Usage
 
 ```bash
+# default test script is '-- npm test'
 $ testen -n 0.12.0 -n 4.2.4 -n 5.6.0 -- ava
 ```
 
@@ -27,7 +28,7 @@ $ testen --help
 Usage:
 
 	--node/-n <version>:  Add a node version to test
-	-- <command>:         The test command you expect
+	-- [command]:         The test command you expect
 	--disable-badge:      Disable auto-update testen badge
 ```
 

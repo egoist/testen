@@ -33,7 +33,7 @@ if (cli.help) {
 		'Usage:',
 		'',
 		'  --node/-n <version>:  Add a node version to test',
-		'  -- <command>:         The test command you expect',
+		'  -- [command]:         The test command you expect',
 		'  --disable-badge:      Disable auto-update testen badge',
 		''
 	].join('\n'))
@@ -42,11 +42,9 @@ if (cli.help) {
 
 /**
  * Ensure we got a command to excute
+ * Set default to 'npm test'
  */
-var command = cli['--']
-if (command.length === 0) {
-	error('Require a command to excute!')
-}
+var command = cli['--'].length === 0 ? ['npm', 'test'] : cli['--']
 
 /**
  * Ensure we got some node versions
