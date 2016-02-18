@@ -75,7 +75,7 @@ function updateBadge(msg) {
 			'https://img.shields.io/badge/testen-failed-red.svg'
 		let content = fs.readFileSync('./README.md', 'utf8')
 		content = content.replace(
-			/!\[testen badge\]\(.*\)/g,
+			/!\[testen badge\]\(.*\)/,
 			'![testen badge](' + badge + ')'
 		)
 		fs.writeFileSync('./README.md', content, 'utf8')

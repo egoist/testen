@@ -31,7 +31,7 @@ $ testen -n 0.12.0 -n 4.2.4 -n 5.6.0 -- ava
 
 **Auto-update badge**
 
-Add `![testen badge](https://img.shields.io/badge/testen-passing-brightgreen.svg)` to your `README.md` and it will automatically update the badge after running each test. Use `--disable-badge` or remove that mark to disable this behavior.
+Add `![testen badge]()` to your `README.md` and it will automatically update the badge after running each test. Use `--disable-badge` or remove that mark to disable this behavior.
 
 ## CLI
 
