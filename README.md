@@ -33,6 +33,16 @@ $ testen -n 0.12.0 -n 4.2.4 -n 5.6.0 -- ava
 
 Add `![testen badge]()` to your `README.md` and it will automatically update the badge after running each test. Use `--disable-badge` or remove that mark to disable this behavior.
 
+**Read Node.js versions from `package.json`**
+
+```json
+{
+  "testen": {
+    "node": ["0.12.0", "5.6.0", "4.2.4"]
+  }
+}
+```
+
 ## CLI
 
 ```bash
