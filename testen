@@ -67,7 +67,14 @@ function shell(command) {
 /**
  * Test script
  */
-const testScript = cli['--'].length === 0 ? 'npm test' : cli['--'].join(' ')
+let testScript = cli['--'].join(' ')
+if (!testScript) {
+	if (pkg.testen && pkg.testen.test) {
+		testScript = pkg.testen.test
+	} else {
+		testScript = 'npm test'
+	}
+}
 
 /**
  * Update badge

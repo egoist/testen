@@ -43,6 +43,16 @@ Add `![testen badge]()` to your `README.md` and it will automatically update the
 }
 ```
 
+**Read test command from `package.json`**
+
+```json
+{
+  "testen": {
+    "test": "xo && ava"
+  }
+}
+```
+
 ## CLI
 
 ```bash
