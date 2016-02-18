@@ -1,6 +1,6 @@
 {
   "name": "testen",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Run tests for multiple versions of Node.js in local env.",
   "license": "MIT",
   "repository": "egoist/testen",
@@ -40,6 +40,10 @@
     "update-notifier": "^0.6.0"
   },
   "testen": {
-    "node": ["0.12.0", "5.6.0", "4.2.4"]
+    "node": [
+      "0.12.0",
+      "5.6.0",
+      "4.2.4"
+    ]
   }
 }
