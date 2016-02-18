@@ -14,7 +14,7 @@ const log = require('log-update')
 const table = require('text-table')
 const co = require('co')
 const semver = require('semver')
-const child = require('child_process')
+const exec = require('then-exec')
 const pkg = require('./package')
 
 update({pkg}).notify()
@@ -52,17 +52,6 @@ if (cli.help) {
 if (cli.version) {
 	console.log(pkg.version)
 	process.exit()
-}
-
-/**
- * exec but return a Promise
- */
-function shell(command) {
-	return new Promise(resolve => {
-		child.exec(command, (error, stdout, stderr) => {
-			resolve({error, stdout, stderr})
-		})
-	})
 }
 
 /**
@@ -113,7 +102,7 @@ co(function* main () {
 	/**
 	 * Get default node version
 	 */
-	const getDefaultNodeVersion = yield shell('node -v')
+	const getDefaultNodeVersion = yield exec('node -v')
 	const defaultNodeVersion = getDefaultNodeVersion.stdout.substring(1).trim()
 
 	/**
@@ -148,7 +137,7 @@ co(function* main () {
 	 * Running test for each version of node
 	 */
 	const res = yield nodeVersions.map((v, index) => {
-		return shell(`. ~/.nvm/nvm.sh && nvm exec ${v} ${testScript}`)
+		return exec(`. ~/.nvm/nvm.sh && nvm exec ${v} ${testScript}`)
 	})
 	/**
 	 * error msg

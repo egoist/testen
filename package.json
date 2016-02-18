@@ -37,6 +37,7 @@
     "path-exists": "^2.1.0",
     "semver": "^5.1.0",
     "text-table": "^0.2.0",
+    "then-exec": "0.0.1",
     "update-notifier": "^0.6.0"
   },
   "testen": {
