@@ -75,6 +75,25 @@ if (!testScript) {
 }
 
 /**
+ * Get status form an array of errors
+ */
+function getStatus(res) {
+	let status = 0
+	res.every(r => {
+		const e = r.error
+		if (!e) {
+			return false
+		}
+		if (e.code !== undefined && e.code !== 0) {
+			status = e.code
+			return false
+		}
+		return true
+	})
+	return status
+}
+
+/**
  * Update badge
  */
 function updateBadge(res) {
@@ -82,7 +101,7 @@ function updateBadge(res) {
 	if (typeof res === 'number') {
 		finalStatus = res
 	} else if (Array.isArray(res)) {
-		finalStatus = res[0].error ? res[0].code : 0
+		finalStatus = getStatus(res)
 	}
 	if (!cli['disable-badge'] && pathExists.sync('./README.md')) {
 		const badge = finalStatus === 0 ?
