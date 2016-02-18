@@ -137,11 +137,14 @@ co(function* main () {
 			output[0] = chalk.bold(output[0])
 			output = output.join('\n')
 			msg.push(
-				`${output}${r.error ? `${r.error.message}\n` : ''}`
+				`${output}${r.error ? `${r.error.message.trim()}` : ''}`
 			)
 		}
 	})
-	msg = `${msg.join('\n')}\n`
+	msg = `${msg.join('\n\n')}\n`
+	if (msg.trim()) {
+		msg += '\n'
+	}
 	log(msg + table(res.map((r, index) => {
 		return [
 			'  ' + (r.error ? chalk.red(figures.cross) : chalk.green(figures.tick)),
