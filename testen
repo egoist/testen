@@ -65,12 +65,20 @@ function shell(command) {
 }
 
 /**
+ * Local package.json
+ */
+let localPkg = {}
+if (pathExists.sync(process.cwd() + '/package.json')) {
+	localPkg = require(process.cwd() + '/package.json')
+}
+
+/**
  * Test script
  */
 let testScript = cli['--'].join(' ')
 if (!testScript) {
-	if (pkg.testen && pkg.testen.test) {
-		testScript = pkg.testen.test
+	if (localPkg.testen && localPkg.testen.test) {
+		testScript = localPkg.testen.test
 	} else {
 		testScript = 'npm test'
 	}
@@ -112,7 +120,7 @@ co(function* main () {
 	 */
 	let nodeVersions = cli.node
 	if (!nodeVersions) {
-		const pkgNodeVersion = pkg.testen && pkg.testen.node
+		const pkgNodeVersion = localPkg.testen && localPkg.testen.node
 		if (!Array.isArray(pkgNodeVersion)) {
 			throw new TypeError('Expect an array')
 		}
