@@ -31,8 +31,6 @@
   "dependencies": {
     "chalk": "^1.1.1",
     "co": "^4.6.0",
-    "cross-spawn": "^2.1.5",
-    "execa": "^0.2.2",
     "figures": "^1.4.0",
     "log-update": "^1.0.2",
     "minimist": "^1.2.0",

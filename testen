@@ -12,9 +12,9 @@ const pathExists = require('path-exists')
 const figures = require('figures')
 const log = require('log-update')
 const table = require('text-table')
-const execa = require('execa')
 const co = require('co')
 const semver = require('semver')
+const child = require('child_process')
 const pkg = require('./package')
 
 update({pkg}).notify()
@@ -52,6 +52,17 @@ if (cli.version) {
 }
 
 /**
+ * exec but return a Promise
+ */
+function shell(command) {
+	return new Promise(resolve => {
+		child.exec(command, (error, stdout, stderr) => {
+			resolve({error, stdout, stderr})
+		})
+	})
+}
+
+/**
  * Test script
  */
 const testScript = cli['--'].length === 0 ? 'npm test' : cli['--'].join(' ')
@@ -59,18 +70,12 @@ const testScript = cli['--'].length === 0 ? 'npm test' : cli['--'].join(' ')
 /**
  * Update badge
  */
-function updateBadge(msg) {
+function updateBadge(res) {
 	let finalStatus = 0
-	if (typeof msg === 'number') {
-		finalStatus = msg
-	} else {
-		msg.every(m => {
-			if (m) {
-				finalStatus = 1
-				return false
-			}
-			return true
-		})
+	if (typeof res === 'number') {
+		finalStatus = res
+	} else if (Array.isArray(res)) {
+		finalStatus = res[0].error ? res[0].code : 0
 	}
 	if (!cli['disable-badge'] && pathExists.sync('./README.md')) {
 		const badge = finalStatus === 0 ?
@@ -90,7 +95,7 @@ co(function* main () {
 	/**
 	 * Get default node version
 	 */
-	const getDefaultNodeVersion = yield execa.shell('node -v')
+	const getDefaultNodeVersion = yield shell('node -v')
 	const defaultNodeVersion = getDefaultNodeVersion.stdout.substring(1).trim()
 
 	/**
@@ -116,26 +121,36 @@ co(function* main () {
 	/**
 	 * Running test for each version of node
 	 */
-	let msg = []
 	const res = yield nodeVersions.map((v, index) => {
-		return execa.shell(`source ~/.nvm/nvm.sh && nvm exec ${v} ${testScript}`)
-			.catch(e => {
-				msg[index] = `${chalk.bold('Error occurs when testing in')} ${v}\n\n${e.stack}\n\n`
-			})
+		return shell(`. ~/.nvm/nvm.sh && nvm exec ${v} ${testScript}`)
 	})
-	log('\n' + msg.join('\n') + table(res.map((r, index) => {
+	/**
+	 * error msg
+	 * @type {Array}
+	 */
+	let msg = []
+	res.forEach((r, index) => {
+		if (r && (r.error || cli.verbose)) {
+			let output = r.stdout.toString().split('\n')
+			output[0] = chalk.bold(output[0])
+			output = output.join('\n')
+			msg.push(
+				`${output}${r.error ? `${r.error.message}\n` : ''}`
+			)
+		}
+	})
+	msg = `${msg.join('\n')}\n`
+	log(msg + table(res.map((r, index) => {
 		return [
-			'  ' + (msg[index] ? chalk.red(figures.cross) : chalk.green(figures.tick)),
+			'  ' + (r.error ? chalk.red(figures.cross) : chalk.green(figures.tick)),
 			nodeVersions[index],
-			msg[index] ? chalk.red('failed') : chalk.green('success')
+			r.error ? chalk.red('failed') : chalk.green('success')
 		]
 	})) + '\n')
 
-	updateBadge(msg)
-
-	// EOF
+	updateBadge(res)
 }).catch(e => {
 	log.clear()
-	updateBadge(1)
 	console.log(e.stack)
+	updateBadge(1)
 })
