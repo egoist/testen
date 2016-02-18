@@ -57,6 +57,33 @@ if (cli.version) {
  */
 const testScript = cli['--'].length === 0 ? 'npm test' : cli['--'].join(' ')
 
+/**
+ * Update badge
+ */
+function updateBadge(msg) {
+	let finalStatus = 0
+	msg.every(m => {
+		if (m) {
+			finalStatus = 1
+			return false
+		}
+		return true
+	})
+	if (!cli['disable-badge'] && pathExists.sync('./README.md')) {
+		const badge = finalStatus === 0 ?
+			'https://img.shields.io/badge/testen-passing-brightgreen.svg' :
+			'https://img.shields.io/badge/testen-failed-red.svg'
+		let content = fs.readFileSync('./README.md', 'utf8')
+		content = content.replace(
+			/!\[testen badge\]\(.*\)/g,
+			'![testen badge](' + badge + ')'
+		)
+		fs.writeFileSync('./README.md', content, 'utf8')
+	}
+	console.log(finalStatus)
+	process.exit(finalStatus)
+}
+
 co(function* main () {
 	/**
 	 * Get default node version
@@ -101,6 +128,8 @@ co(function* main () {
 			msg[index] ? chalk.red('failed') : chalk.green('success')
 		]
 	})) + '\n')
+
+	updateBadge(msg)
 
 	// EOF
 }).catch(e => {
