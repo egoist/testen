@@ -38,6 +38,8 @@ if (cli.help) {
 		'  --node/-n [version]:  Add a node version to test',
 		'  -- [command]:         The test command you expect',
 		'  --disable-badge:      Disable auto-update testen badge',
+		'  --verbose:            Always output everything',
+		'                          ~ example: there are `console.log` in test',
 		''
 	].join('\n'))
 	process.exit()

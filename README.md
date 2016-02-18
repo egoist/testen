@@ -40,9 +40,11 @@ $ testen --help
 
 Usage:
 
-	--node/-n [version]:  Add a node version to test
-	-- [command]:         The test command you expect
-	--disable-badge:      Disable auto-update testen badge
+  --node/-n [version]:  Add a node version to test
+  -- [command]:         The test command you expect
+  --disable-badge:      Disable auto-update testen badge
+  --verbose:            Always output everything
+                          ~ example: there are `console.log` in test
 ```
 
 ## License
