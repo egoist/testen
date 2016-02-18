@@ -61,13 +61,17 @@ const testScript = cli['--'].length === 0 ? 'npm test' : cli['--'].join(' ')
  */
 function updateBadge(msg) {
 	let finalStatus = 0
-	msg.every(m => {
-		if (m) {
-			finalStatus = 1
-			return false
-		}
-		return true
-	})
+	if (typeof msg === 'number') {
+		finalStatus = msg
+	} else {
+		msg.every(m => {
+			if (m) {
+				finalStatus = 1
+				return false
+			}
+			return true
+		})
+	}
 	if (!cli['disable-badge'] && pathExists.sync('./README.md')) {
 		const badge = finalStatus === 0 ?
 			'https://img.shields.io/badge/testen-passing-brightgreen.svg' :
@@ -132,5 +136,6 @@ co(function* main () {
 	// EOF
 }).catch(e => {
 	log.clear()
+	updateBadge(1)
 	console.log(e.stack)
 })
