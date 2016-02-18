@@ -30,11 +30,14 @@
   ],
   "dependencies": {
     "chalk": "^1.1.1",
+    "co": "^4.6.0",
     "cross-spawn": "^2.1.5",
+    "execa": "^0.2.2",
     "figures": "^1.4.0",
     "log-update": "^1.0.2",
     "minimist": "^1.2.0",
     "path-exists": "^2.1.0",
+    "semver": "^5.1.0",
     "text-table": "^0.2.0",
     "update-notifier": "^0.6.0"
   }

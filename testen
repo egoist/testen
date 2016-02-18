@@ -4,24 +4,28 @@
 /**
  * Module dependencies
  */
-var fs = require('fs')
-var minimist = require('minimist')
-var update = require('update-notifier')
-var chalk = require('chalk')
-var spawn = require('cross-spawn')
-var pathExists = require('path-exists')
-var figures = require('figures')
-var log = require('log-update')
-var table = require('text-table')
-var pkg = require('./package')
+const fs = require('fs')
+const minimist = require('minimist')
+const update = require('update-notifier')
+const chalk = require('chalk')
+const spawn = require('cross-spawn')
+const pathExists = require('path-exists')
+const figures = require('figures')
+const log = require('log-update')
+const table = require('text-table')
+const execa = require('execa')
+const co = require('co')
+const semver = require('semver')
+const pkg = require('./package')
 
 update({pkg: pkg}).notify()
 
-var cli = minimist(process.argv.slice(2), {
+const cli = minimist(process.argv.slice(2), {
 	'--': true,
 	'alias': {
 		n: 'node',
-		h: 'help'
+		h: 'help',
+		v: 'version'
 	}
 })
 /**
@@ -41,111 +45,65 @@ if (cli.help) {
 }
 
 /**
- * Ensure we got a command to excute
- * Set default to 'npm test'
+ * Print version
  */
-var command = cli['--'].length === 0 ? ['npm', 'test'] : cli['--']
-
-/**
- * Get node version before test
- */
-var runNode = spawn.sync('node', ['-v'])
-var nodeVersion = runNode.stdout.toString().substring(1).trim()
-
-/**
- * Ensure we got some node versions
- */
-var useDefaultNode = false
-var useNodeVersion = cli.node
-if (!useNodeVersion || useNodeVersion === 0) {
-	useNodeVersion = [nodeVersion]
-	useDefaultNode = true
-}
-// ensure `node versions` is an array
-if (typeof useNodeVersion === 'string') {
-	useNodeVersion = [cli.node]
-}
-
-/**
- * Run test
- */
-var finalStatus = 0
-var msg = ''
-var result = useNodeVersion.map(function (version) {
-	return ['  ' + chalk.gray(figures.circle), version, chalk.gray('running')]
-})
-logResult(result)
-useNodeVersion.forEach(function (version, index) {
-	if (!useDefaultNode) {
-		var setVersion = spawn.sync('n', [version], {stdio: 'inherit'})
-		handleError(setVersion)
-	}
-	var test = spawn.sync(command[0], command.slice(1))
-	handleError(test)
-	if (test.status !== 0) {
-		result[index] = ['  ' + chalk.red(figures.cross), version, chalk.red('failed')]
-		finalStatus = typeof test.status === 'number' ? test.status : 1
-		msg += chalk.bold('error occurs when testing with Node ' + version) + '\n' +
-			(test.stderr.toString().trim() ? test.stderr.toString() : test.stdout.toString())
-		logResult(result)
-	} else {
-		result[index] = ['  ' + chalk.green(figures.tick), version, chalk.green('passed')]
-		logResult(result)
-	}
-})
-
-/**
- * Recover node version after test
- */
-if (!useDefaultNode) {
-	recover()
-}
-function recover() {
-	spawn.sync('n', [nodeVersion], {stdio: 'inherit'})
-}
-
-updateBadge()
-process.exit(finalStatus)
-
-/**
- * Log in table
- */
-function logResult(res) {
-	log(msg + '\n' + table(res) + '\n')
-}
-
-/**
- * Error util
- */
-function error(msg) {
-	console.log(chalk.red(msg))
+if (cli.version) {
+	console.log(pkg.version)
 	process.exit()
 }
 
 /**
- * Update badge
+ * Test script
  */
-function updateBadge() {
-	if (!cli['disable-badge'] && pathExists.sync('./README.md')) {
-		var badge = finalStatus === 0 ?
-			'https://img.shields.io/badge/testen-passing-brightgreen.svg' :
-			'https://img.shields.io/badge/testen-failed-red.svg'
-		var content = fs.readFileSync('./README.md', 'utf8')
-		content = content.replace(
-			/!\[testen badge\]\([^.]*\)/g,
-			'![testen badge](' + badge + ')'
-		)
-		fs.writeFileSync('./README.md', content, 'utf8')
-	}
-}
+const testScript = cli['--'].length === 0 ? 'npm test' : cli['--'].join(' ')
 
-/**
- * Handle error
- */
-function handleError(command) {
-	if (command.error) {
-		recover()
-		log.clear()
-		throw new Error(command.error)
+co(function* main () {
+	/**
+	 * Get default node version
+	 */
+	const getDefaultNodeVersion = yield execa.shell('node -v')
+	const defaultNodeVersion = getDefaultNodeVersion.stdout.substring(1).trim()
+
+	/**
+	 * Get input node versions and sort them
+	 */
+	let nodeVersions = cli.node
+	if (!nodeVersions) {
+		nodeVersions = [defaultNodeVersion]
 	}
-}
+	if (typeof nodeVersions === 'string') {
+		nodeVersions = [nodeVersions]
+	}
+	nodeVersions.sort((a, b) => semver.gt(a, b))
+
+	/**
+	 * Generate initial result and log as table
+	 */
+	const result = nodeVersions.map(v => {
+		return ['  ' + chalk.gray(figures.circle), v, chalk.gray('running')]
+	})
+	log('\n' + table(result) + '\n')
+
+	/**
+	 * Running test for each version of node
+	 */
+	let msg = []
+	const res = yield nodeVersions.map((v, index) => {
+		return execa.shell(`source ~/.nvm/nvm.sh && nvm exec ${v} ${testScript}`)
+			.catch(e => {
+				msg[index] = `${chalk.bold('Error occurs when testing in')} ${v}\n\n${e.stack}\n\n`
+			})
+	})
+	log('\n' + msg.join('\n') + table(res.map((r, index) => {
+		return [
+			'  ' + (msg[index] ? chalk.red(figures.cross) : chalk.green(figures.tick)),
+			nodeVersions[index],
+			msg[index] ? chalk.red('failed') : chalk.green('success')
+		]
+	})) + '\n')
+
+	// EOF
+}).catch(e => {
+	log.clear()
+	console.log(e.stack)
+})

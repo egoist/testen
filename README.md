@@ -7,9 +7,11 @@ Automatically update testen badge in your README after running tests.
 
 ## Install
 
-You need to install `n` before using `testen`.
+```bash
+# if you are using `n`
+$ npm install -g testen@0.1
 
-```
+# if you are using `nvm`
 $ npm install -g testen
 ```
 
@@ -20,6 +22,7 @@ $ npm install -g testen
 $ testen
 
 # multiple versions
+# please ensure the version you wanna test with was already intalled
 $ testen -n 4.2.4 -n 5.6.0 -n 0.12.0
 
 # override test script, default is '-- npm test'
