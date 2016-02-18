@@ -11,7 +11,7 @@ Automatically update testen badge in your README after running tests.
 # if you are using `n`
 $ npm install -g testen@0.1
 
-# if you are using `nvm`
+# if you are using `nvm`, required node >= 4
 $ npm install -g testen
 ```
 

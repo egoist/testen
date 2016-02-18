@@ -18,7 +18,7 @@ const co = require('co')
 const semver = require('semver')
 const pkg = require('./package')
 
-update({pkg: pkg}).notify()
+update({pkg}).notify()
 
 const cli = minimist(process.argv.slice(2), {
 	'--': true,
@@ -76,7 +76,7 @@ function updateBadge(msg) {
 		let content = fs.readFileSync('./README.md', 'utf8')
 		content = content.replace(
 			/!\[testen badge\]\(.*\)/,
-			'![testen badge](' + badge + ')'
+			`![testen badge](${badge})`
 		)
 		fs.writeFileSync('./README.md', content, 'utf8')
 	}
