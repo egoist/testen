@@ -80,7 +80,6 @@ function updateBadge(msg) {
 		)
 		fs.writeFileSync('./README.md', content, 'utf8')
 	}
-	console.log(finalStatus)
 	process.exit(finalStatus)
 }
 
