@@ -26,7 +26,7 @@ $ testen
 $ testen -n 4.2.4 -n 5.6.0 -n 0.12.0
 
 # override test script, default is '-- npm test'
-$ testen -n 0.12.0 -n 4.2.4 -n 5.6.0 -- ava
+$ testen -n 0.12.0 -n 4.2.4 -n 5.6.0 -- ./node_modules/.bin/ava
 ```
 
 **Auto-update badge**
@@ -48,7 +48,7 @@ Add `![testen badge]()` to your `README.md` and it will automatically update the
 ```json
 {
   "testen": {
-    "test": "xo && ava"
+    "test": "npm run test:custom"
   }
 }
 ```
