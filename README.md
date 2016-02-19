@@ -63,7 +63,7 @@ Usage:
   --node/-n [version]:  Add a node version to test
   -- [command]:         The test command you expect
   --disable-badge:      Disable auto-update testen badge
-  --verbose/-V:            Always output everything
+  --verbose/-V:         Always output everything
                           ~ example: there are `console.log` in test
 ```
 
