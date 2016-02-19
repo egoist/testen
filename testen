@@ -130,9 +130,6 @@ co(function* main () {
 	let nodeVersions = cli.node
 	if (!nodeVersions) {
 		const pkgNodeVersion = localPkg.testen && localPkg.testen.node
-		if (!Array.isArray(pkgNodeVersion)) {
-			yield Promise.reject(new TypeError('Expect an array'))
-		}
 		if (pkgNodeVersion && pkgNodeVersion.length > 0) {
 			nodeVersions = pkgNodeVersion
 		} else {
