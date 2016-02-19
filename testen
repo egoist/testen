@@ -131,7 +131,7 @@ co(function* main () {
 	if (!nodeVersions) {
 		const pkgNodeVersion = localPkg.testen && localPkg.testen.node
 		if (!Array.isArray(pkgNodeVersion)) {
-			throw new TypeError('Expect an array')
+			yield Promise.reject(new TypeError('Expect an array'))
 		}
 		if (pkgNodeVersion && pkgNodeVersion.length > 0) {
 			nodeVersions = pkgNodeVersion
@@ -153,37 +153,39 @@ co(function* main () {
 	log('\n' + table(result) + '\n')
 
 	/**
-	 * Running test for each version of node
-	 */
-	const res = yield nodeVersions.map((v, index) => {
-		return exec(`. ~/.nvm/nvm.sh && nvm exec ${v} ${testScript}`)
-	})
-	/**
-	 * error msg
-	 * @type {Array}
+	 * Execute test
 	 */
 	let msg = []
-	res.forEach((r, index) => {
-		if (r && (r.error || cli.verbose)) {
-			let output = r.stdout.toString().split('\n')
-			output[0] = chalk.bold(output[0])
-			output = output.join('\n')
-			msg.push(
-				`${output}${r.error ? `${r.error.message.trim()}` : ''}`
-			)
-		}
-	})
-	msg = `${msg.join('\n\n')}\n`
-	if (msg.trim()) {
-		msg += '\n'
-	}
-	log(msg + table(res.map((r, index) => {
-		return [
-			'  ' + (r.error ? chalk.red(figures.cross) : chalk.green(figures.tick)),
+	const execTest = co.wrap(function* (command, index) {
+		const cmd = yield exec(command)
+		result[index] = [
+			'  ' + (cmd.error ? chalk.red(figures.cross) : chalk.green(figures.tick)),
 			nodeVersions[index],
-			r.error ? chalk.red('failed') : chalk.green('success')
+			cmd.error ? chalk.red('failed') : chalk.green('success')
 		]
-	})) + '\n')
+		if (cmd && (cmd.error || cli.verbose)) {
+			let output = cmd.stdout.toString().split('\n')
+			output[0] = chalk.bold(output[0])
+			if (!output[1] && !cmd.error) {
+				output[1] = 'no output\n'
+			}
+			output = output.join('\n')
+			msg[index] = `${output}${cmd.error ? `${cmd.error.message.trim()}` : ''}`
+		}
+		let heading = `${msg.join('\n\n')}\n`
+		if (heading.trim()) {
+			heading += '\n'
+		}
+		log(heading + table(result) + '\n')
+		return cmd
+	})
+
+	/**
+	 * Running test for each version of node
+	 */
+	const res = yield Promise.all(nodeVersions.map((v, index) => {
+		return execTest(`. ~/.nvm/nvm.sh && nvm exec ${v} ${testScript}`, index)
+	}))
 
 	updateBadge(res)
 }).catch(e => {
