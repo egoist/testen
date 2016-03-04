@@ -30,7 +30,7 @@ $ testen -n 0.12.0 -n 4.2.4 -n 5.6.0 -- ./node_modules/.bin/ava
 
 # add presets node versions, currently they are:
 # 0.12.0/4.2.4/5.6.0
-$ test -n 0.10.0 -d
+$ testen -n 0.10.0 -d
 ```
 
 **Auto-update badge**
