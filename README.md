@@ -8,7 +8,7 @@ Automatically update testen badge in your README after running tests.
 ## Install
 
 ```bash
-# if you are using `n`
+# if you are using `n`, deprecated
 $ npm install -g testen@0.1
 
 # if you are using `nvm`, required node >= 4
