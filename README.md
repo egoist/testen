@@ -1,4 +1,4 @@
-# testen [![NPM version](https://img.shields.io/npm/v/testen.svg)](https://npmjs.com/package/testen) [![NPM downloads](https://img.shields.io/npm/dm/testen.svg)](https://npmjs.com/package/testen) ![testen badge](https://img.shields.io/badge/testen-passing-brightgreen.svg)
+# testen [![NPM version](https://img.shields.io/npm/v/testen.svg)](https://npmjs.com/package/testen) [![NPM downloads](https://img.shields.io/npm/dm/testen.svg)](https://npmjs.com/package/testen) ![testen badge](https://img.shields.io/badge/testen-failed-red.svg)
 
 Run tests for multiple versions of Node.js in local env.  
 Automatically update testen badge in your README after running tests.
@@ -27,6 +27,10 @@ $ testen -n 4.2.4 -n 5.6.0 -n 0.12.0
 
 # override test script, default is '-- npm test'
 $ testen -n 0.12.0 -n 4.2.4 -n 5.6.0 -- ./node_modules/.bin/ava
+
+# add presets node versions, currently they are:
+# 0.12.0/4.2.4/5.6.0
+$ test -n 0.10.0 -d
 ```
 
 **Auto-update badge**
@@ -61,9 +65,10 @@ $ testen --help
 Usage:
 
   --node/-n [version]:  Add a node version to test
+  --default/-d:         Add preset node versions to test
   -- [command]:         The test command you expect
   --disable-badge:      Disable auto-update testen badge
-  --verbose/-V:         Always output everything
+  --verbose/V:            Always output everything
                           ~ example: there are `console.log` in test
 ```
 

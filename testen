@@ -15,6 +15,7 @@ const table = require('text-table')
 const co = require('co')
 const semver = require('semver')
 const exec = require('then-exec')
+const arrayUnique = require('array-unique')
 const pkg = require('./package')
 
 update({pkg}).notify()
@@ -25,7 +26,8 @@ const cli = minimist(process.argv.slice(2), {
 		n: 'node',
 		h: 'help',
 		v: 'version',
-		V: 'verbose'
+		V: 'verbose',
+		d: 'default'
 	}
 })
 /**
@@ -37,6 +39,7 @@ if (cli.help) {
 		'Usage:',
 		'',
 		'  --node/-n [version]:  Add a node version to test',
+		'  --default/-d:         Add preset node versions to test',
 		'  -- [command]:         The test command you expect',
 		'  --disable-badge:      Disable auto-update testen badge',
 		'  --verbose/V:            Always output everything',
@@ -53,6 +56,15 @@ if (cli.version) {
 	console.log(pkg.version)
 	process.exit()
 }
+
+/**
+ * Preset node versions
+ */
+const presetVersions = [
+	'0.12.0',
+	'4.2.4',
+	'5.6.0'
+]
 
 /**
  * Local package.json
@@ -139,6 +151,10 @@ co(function* main () {
 	if (typeof nodeVersions === 'string') {
 		nodeVersions = [nodeVersions]
 	}
+	if (cli.default) {
+		nodeVersions = nodeVersions.concat(presetVersions)
+	}
+	nodeVersions = arrayUnique(nodeVersions)
 	nodeVersions.sort((a, b) => semver.gt(a, b))
 
 	/**
