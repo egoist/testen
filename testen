@@ -16,7 +16,10 @@ const co = require('co')
 const semver = require('semver')
 const exec = require('then-exec')
 const arrayUnique = require('array-unique')
+const Hinata = require('hinata')
 const pkg = require('./package')
+
+const spin = new Hinata({char: '♥', text: '  ', prepend: true})
 
 update({pkg}).notify()
 
@@ -126,6 +129,7 @@ function updateBadge(res) {
 		)
 		fs.writeFileSync('./README.md', content, 'utf8')
 	}
+	spin.stop()
 	process.exit(finalStatus)
 }
 
@@ -156,6 +160,10 @@ co(function* main () {
 	}
 	nodeVersions = arrayUnique(nodeVersions)
 	nodeVersions.sort((a, b) => semver.gt(a, b))
+
+	const spinLength = nodeVersions.length
+	spin.length = spinLength
+	spin.start()
 
 	/**
 	 * Generate initial result and log as table
