@@ -203,7 +203,7 @@ co(function* main () {
 				output[1] = 'no output\n'
 			}
 			output = output.join('\n')
-			msg[index] = `${output.trim()}${cmd.error ? `${cmd.error.message.trim()}` : ''}`
+			msg[index] = `${output.trim()}\n${cmd.error ? `${cmd.error.message.trim()}` : ''}`
 		}
 		let heading = `${msg.join('\n\n')}\n`
 		if (heading.trim()) {
