@@ -198,7 +198,7 @@ co(function* main () {
 		]
 		if (cmd && (cmd.error || cli.verbose)) {
 			let output = cmd.stdout.toString().split('\n')
-			output[0] = chalk.bold(output[0] || chalk.red(`Running node v${version}`))
+			output[0] = chalk.bold(output[0] || chalk.red(`Node v${version} is not yet installed`))
 			if (!output[1] && !cmd.error) {
 				output[1] = 'no output\n'
 			}
