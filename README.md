@@ -7,42 +7,32 @@ Automatically update testen badge in your README after running tests.
 
 ## Install
 
-```bash
-# if you are using `n`, deprecated
-$ npm install -g testen@0.1
+You should have `nvm` and `node >= 4` installed.
 
-# if you are using `nvm`, required node >= 4
+```bash
 $ npm install -g testen
 ```
 
 ## Usage
 
 ```bash
-# use system's default node version to run `npm test`
 $ testen
-
-# multiple versions
-# please ensure the version you wanna test with was already intalled
-$ testen -n 4.2.4 -n 5.6.0 -n 0.12.0
-
-# override test script, default is '-- npm test'
-$ testen -n 0.12.0 -n 4.2.4 -n 5.6.0 -- ./node_modules/.bin/ava
-
-# add presets node versions, currently they are:
-# 0.12.0/4.2.4/5.6.0
-$ testen -n 0.10.0 -d
 ```
 
-**Auto-update badge**
+This will run `npm test` script, if `.travis.yml` or `circle.yml` exists, use node versions in it. Otherwise use [preset node versions](/lib/preset-version.json).
 
-Add `![testen badge]()` to your `README.md` and it will automatically update the badge after running each test. Use `--disable-badge` or remove that mark to disable this behavior.
+Sometimes you wanna override these node versions, just pass `-n` to do this:
+
+```bash
+$ testen -n 0.10 -n 0.12
+```
 
 **Read Node.js versions from `package.json`**
 
 ```json
 {
   "testen": {
-    "node": ["0.12.0", "5.6.0", "4.2.4"]
+    "node": ["0.12.0", "5", "4.2.4"]
   }
 }
 ```
@@ -57,6 +47,10 @@ Add `![testen badge]()` to your `README.md` and it will automatically update the
 }
 ```
 
+**Auto-update badge**
+
+Add `![testen badge]()` to your `README.md` and it will automatically update the badge after running each test. Use `--disable-badge` or remove that mark to disable this behavior.
+
 ## CLI
 
 ```bash
@@ -65,7 +59,6 @@ $ testen --help
 Usage:
 
   --node/-n [version]:  Add a node version to test
-  --default/-d:         Add preset node versions to test
   -- [command]:         The test command you expect
   --disable-badge:      Disable auto-update testen badge
   --verbose/V:            Always output everything

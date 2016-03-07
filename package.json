@@ -18,7 +18,8 @@
     "testen": "testen"
   },
   "files": [
-    "testen"
+    "testen",
+    "lib"
   ],
   "keywords": [
     "cli-app",
@@ -40,9 +41,7 @@
     "semver": "^5.1.0",
     "text-table": "^0.2.0",
     "then-exec": "0.0.1",
+    "travis-or-circle": "^1.0.0",
     "update-notifier": "^0.6.0"
-  },
-  "testen": {
-    "test": "ls -A"
   }
 }
