@@ -19,7 +19,7 @@ $ npm install -g testen
 $ testen
 ```
 
-This will run `npm test` script, if `.travis.yml` or `circle.yml` exists, use node versions in it. Otherwise use [preset node versions](/lib/preset-version.json).
+This will run `npm test` script, if `.travis.yml` or `circle.yml` exists, use node versions in it. Otherwise use [preset node versions](/lib/preset-versions.json).
 
 Sometimes you wanna override these node versions, just pass `-n` to do this:
 
