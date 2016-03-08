@@ -1,6 +1,6 @@
 {
   "name": "testen",
-  "version": "1.4.5",
+  "version": "1.4.6",
   "description": "Run tests for multiple versions of Node.js in local env.",
   "license": "MIT",
   "repository": "egoist/testen",
