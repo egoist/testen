@@ -112,12 +112,15 @@ function updateBadge(res) {
 		const badge = finalStatus === 0 ?
 			'https://img.shields.io/badge/testen-passing-brightgreen.svg' :
 			'https://img.shields.io/badge/testen-failed-red.svg'
+		const re = /!\[testen badge\]\(.*\)/
 		let content = fs.readFileSync('./README.md', 'utf8')
-		content = content.replace(
-			/!\[testen badge\]\(.*\)/,
-			`![testen badge](${badge})`
-		)
-		fs.writeFileSync('./README.md', content, 'utf8')
+		if (re.test(content)) {
+			content = content.replace(
+				re,
+				`![testen badge](${badge})`
+			)
+			fs.writeFileSync('./README.md', content, 'utf8')
+		}
 	}
 	spin.stop()
 	process.exit(finalStatus)
