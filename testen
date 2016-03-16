@@ -20,7 +20,7 @@ const travisOrCircle = require('travis-or-circle')
 const pkg = require('./package')
 const presetVersions = require('./lib/preset-versions')
 
-const spin = new Hinata({char: '♥', text: '  ', prepend: true, spacing: 2})
+const spin = new Hinata({char: '●', text: '  ', prepend: true, spacing: 1})
 
 update({pkg}).notify()
 
