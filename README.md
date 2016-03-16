@@ -3,7 +3,7 @@
 Run tests for multiple versions of Node.js in local env.  
 Automatically update testen badge in your README after running tests.
 
-![preview](https://ooo.0o0.ooo/2016/03/06/56dd033db2517.gif)
+![preview](https://ooo.0o0.ooo/2016/03/16/56e8f575ca3f4.gif)
 
 ## Install
 
