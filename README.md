@@ -65,6 +65,12 @@ Usage:
                           ~ example: there are `console.log` in test
 ```
 
+## Related
+
+`testen` has a good chemistry with [kanpai](https://github.com/egoist/kanpai):
+
+![preview](https://ooo.0o0.ooo/2016/03/17/56ea4ba76710e.png)
+
 ## License
 
 MIT © [EGOIST](https://github.com/egoist)
