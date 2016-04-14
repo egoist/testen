@@ -31,7 +31,6 @@
   ],
   "dependencies": {
     "array-unique": "^0.2.1",
-    "boxen": "^0.5.1",
     "chalk": "^1.1.1",
     "co": "^4.6.0",
     "figures": "^1.4.0",
