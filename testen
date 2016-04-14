@@ -17,6 +17,8 @@ const exec = require('then-exec')
 const arrayUnique = require('array-unique')
 const Hinata = require('hinata')
 const travisOrCircle = require('travis-or-circle')
+const boxen = require('boxen')
+const indento = require('indento')
 const pkg = require('./package')
 const presetVersions = require('./lib/preset-versions')
 
@@ -25,38 +27,38 @@ const spin = new Hinata({char: '●', text: '  ', prepend: true, spacing: 1})
 update({pkg}).notify()
 
 const cli = minimist(process.argv.slice(2), {
-	'--': true,
-	'alias': {
-		n: 'node',
-		h: 'help',
-		v: 'version',
-		V: 'verbose'
-	}
+  '--': true,
+  'alias': {
+    n: 'node',
+    h: 'help',
+    v: 'version',
+    V: 'verbose'
+  }
 })
 /**
  * Print help
  */
 if (cli.help) {
-	console.log([
-		'',
-		'Usage:',
-		'',
-		'  --node/-n [version]:  Add a node version to test',
-		'  -- [command]:         The test command you expect',
-		'  --disable-badge:      Disable auto-update testen badge',
-		'  --verbose/V:          Always output everything',
-		'                          ~ example: there are `console.log` in test',
-		''
-	].join('\n'))
-	process.exit()
+  console.log([
+    '',
+    'Usage:',
+    '',
+    '  --node/-n [version]:  Add a node version to test',
+    '  -- [command]:         The test command you expect',
+    '  --disable-badge:      Disable auto-update testen badge',
+    '  --verbose/V:          Always output everything',
+    '                          ~ example: there are `console.log` in test',
+    ''
+  ].join('\n'))
+  process.exit()
 }
 
 /**
  * Print version
  */
 if (cli.version) {
-	console.log(pkg.version)
-	process.exit()
+  console.log(pkg.version)
+  process.exit()
 }
 
 /**
@@ -64,7 +66,7 @@ if (cli.version) {
  */
 let localPkg = {}
 if (pathExists.sync(process.cwd() + '/package.json')) {
-	localPkg = require(process.cwd() + '/package.json')
+  localPkg = require(process.cwd() + '/package.json')
 }
 
 /**
@@ -72,58 +74,67 @@ if (pathExists.sync(process.cwd() + '/package.json')) {
  */
 let testScript = cli['--'].join(' ')
 if (!testScript) {
-	if (localPkg.testen && localPkg.testen.test) {
-		testScript = localPkg.testen.test
-	} else {
-		testScript = 'npm test'
-	}
+  if (localPkg.testen && localPkg.testen.test) {
+    testScript = localPkg.testen.test
+  } else {
+    testScript = 'npm test'
+  }
 }
 
 /**
  * Get status form an array of errors
  */
 function getStatus(res) {
-	let status = 0
-	res.every(r => {
-		const e = r.error
-		if (!e) {
-			return false
-		}
-		if (e.code !== undefined && e.code !== 0) {
-			status = e.code
-			return false
-		}
-		return true
-	})
-	return status
+  let status = 0
+  res.every(r => {
+    const e = r.error
+    if (!e) {
+      return false
+    }
+    if (e.code !== undefined && e.code !== 0) {
+      status = e.code
+      return false
+    }
+    return true
+  })
+  return status
 }
 
 /**
  * Update badge
  */
 function updateBadge(res) {
-	let finalStatus = 0
-	if (typeof res === 'number') {
-		finalStatus = res
-	} else if (Array.isArray(res)) {
-		finalStatus = getStatus(res)
-	}
-	if (!cli['disable-badge'] && pathExists.sync('./README.md')) {
-		const badge = finalStatus === 0 ?
-			'https://img.shields.io/badge/testen-passing-brightgreen.svg' :
-			'https://img.shields.io/badge/testen-failed-red.svg'
-		const re = /!\[testen badge\]\(.*\)/
-		let content = fs.readFileSync('./README.md', 'utf8')
-		if (re.test(content)) {
-			content = content.replace(
-				re,
-				`![testen badge](${badge})`
-			)
-			fs.writeFileSync('./README.md', content, 'utf8')
-		}
-	}
-	spin.stop()
-	process.exit(finalStatus)
+  let finalStatus = 0
+  if (typeof res === 'number') {
+    finalStatus = res
+  } else if (Array.isArray(res)) {
+    finalStatus = getStatus(res)
+  }
+  if (!cli['disable-badge'] && pathExists.sync('./README.md')) {
+    const badge = finalStatus === 0 ?
+      'https://img.shields.io/badge/testen-passing-brightgreen.svg' :
+      'https://img.shields.io/badge/testen-failed-red.svg'
+    const re = /\!\[testen badge\]\(([^\)]*)\)/
+    let content = fs.readFileSync('./README.md', 'utf8')
+    if (re.test(content)) {
+      content = content.replace(
+        re,
+        `![testen badge](${badge})`
+      )
+      fs.writeFileSync('./README.md', content, 'utf8')
+    } else {
+      const box = `[![${chalk.magenta('testen badge')}](${chalk.green(badge)})][${chalk.green('testen repo')}]
+[${chalk.magenta('testen repo')}]: ${chalk.green('https://github.com/egoist/testen')}`
+      let badgeCode = indento(`Copy the following Markdown code to your README.
+Then testen will auto-update your testen badge.
+
+${box}
+      `, 2)
+      console.log(badgeCode)
+    }
+  }
+  spin.stop()
+  process.exit(finalStatus)
 }
 
 /**
@@ -133,98 +144,98 @@ function updateBadge(res) {
  * @return {number} 1/-1/0
  */
 function versionCompare(left, right) {
-	if (typeof left + typeof right !== 'stringstring') {
-		throw new TypeError('Expect version number to be string')
-	}
+  if (typeof left + typeof right !== 'stringstring') {
+    throw new TypeError('Expect version number to be string')
+  }
 
-	const a = left.split('.')
-	const b = right.split('.')
-	const len = Math.max(a.length, b.length)
+  const a = left.split('.')
+  const b = right.split('.')
+  const len = Math.max(a.length, b.length)
 
-	for (let i = 0; i < len; i++) {
-		if ((a[i] && !b[i] && parseInt(a[i]) > 0) || (parseInt(a[i]) > parseInt(b[i]))) {
-			return 1
-		} else if ((b[i] && !a[i] && parseInt(b[i]) > 0) || (parseInt(a[i]) < parseInt(b[i]))) {
-			return -1
-		}
-	}
+  for (let i = 0; i < len; i++) {
+    if ((a[i] && !b[i] && parseInt(a[i]) > 0) || (parseInt(a[i]) > parseInt(b[i]))) {
+      return 1
+    } else if ((b[i] && !a[i] && parseInt(b[i]) > 0) || (parseInt(a[i]) < parseInt(b[i]))) {
+      return -1
+    }
+  }
 
-	return 0
+  return 0
 }
 
 co(function* main () {
-	/**
-	 * Get node versions from cli or .yml
-	 * If nothing got then read from package.json
-	 * It still nothing, use preset versions
-	 * Finally sort and arrayUnique
-	 */
-	let nodeVersions = cli.node === undefined ? travisOrCircle() : cli.node
-	if (!nodeVersions && typeof nodeVersions !== 'number') {
-		const pkgNodeVersion = localPkg.testen && localPkg.testen.node
-		if (pkgNodeVersion && pkgNodeVersion.length > 0) {
-			nodeVersions = pkgNodeVersion
-		} else {
-			nodeVersions = presetVersions
-		}
-	}
-	if (!Array.isArray(nodeVersions)) {
-		nodeVersions = [nodeVersions]
-	}
-	nodeVersions = nodeVersions.map(v => String(v))
-	nodeVersions = arrayUnique(nodeVersions)
-	nodeVersions.sort((a, b) => versionCompare(a, b))
+  /**
+   * Get node versions from cli or .yml
+   * If nothing got then read from package.json
+   * It still nothing, use preset versions
+   * Finally sort and arrayUnique
+   */
+  let nodeVersions = cli.node === undefined ? travisOrCircle() : cli.node
+  if (!nodeVersions && typeof nodeVersions !== 'number') {
+    const pkgNodeVersion = localPkg.testen && localPkg.testen.node
+    if (pkgNodeVersion && pkgNodeVersion.length > 0) {
+      nodeVersions = pkgNodeVersion
+    } else {
+      nodeVersions = presetVersions
+    }
+  }
+  if (!Array.isArray(nodeVersions)) {
+    nodeVersions = [nodeVersions]
+  }
+  nodeVersions = nodeVersions.map(v => String(v))
+  nodeVersions = arrayUnique(nodeVersions)
+  nodeVersions.sort((a, b) => versionCompare(a, b))
 
-	const spinLength = nodeVersions.length
-	spin.length = spinLength
-	spin.start()
+  const spinLength = nodeVersions.length
+  spin.length = spinLength
+  spin.start()
 
-	/**
-	 * Generate initial result and log as table
-	 */
-	const result = nodeVersions.map(v => {
-		return ['  ' + chalk.gray(figures.circle), v, chalk.gray('running')]
-	})
-	log('\n' + table(result) + '\n')
+  /**
+   * Generate initial result and log as table
+   */
+  const result = nodeVersions.map(v => {
+    return ['  ' + chalk.gray(figures.circle), v, chalk.gray('running')]
+  })
+  log('\n' + table(result) + '\n')
 
-	/**
-	 * Execute test
-	 */
-	let msg = []
-	const execTest = co.wrap(function* (command, index, version) {
-		const cmd = yield exec(command)
-		result[index] = [
-			'  ' + (cmd.error ? chalk.red(figures.cross) : chalk.green(figures.tick)),
-			nodeVersions[index],
-			cmd.error ? chalk.red('failed') : chalk.green('success')
-		]
-		if (cmd && (cmd.error || cli.verbose)) {
-			let output = cmd.stdout.toString().split('\n')
-			output[0] = chalk.bold(output[0] || chalk.red(`Node v${version} is not yet installed`))
-			if (!output[1] && !cmd.error) {
-				output[1] = 'no output\n'
-			}
-			output = output.join('\n')
-			msg[index] = `${output.trim()}\n${cmd.error ? `${cmd.error.message.trim()}` : ''}`
-		}
-		let heading = `${msg.join('\n\n')}\n`
-		if (heading.trim()) {
-			heading += '\n'
-		}
-		log(heading + table(result) + '\n')
-		return cmd
-	})
+  /**
+   * Execute test
+   */
+  let msg = []
+  const execTest = co.wrap(function* (command, index, version) {
+    const cmd = yield exec(command)
+    result[index] = [
+      '  ' + (cmd.error ? chalk.red(figures.cross) : chalk.green(figures.tick)),
+      nodeVersions[index],
+      cmd.error ? chalk.red('failed') : chalk.green('success')
+    ]
+    if (cmd && (cmd.error || cli.verbose)) {
+      let output = cmd.stdout.toString().split('\n')
+      output[0] = chalk.bold(output[0] || chalk.red(`Node v${version} is not yet installed`))
+      if (!output[1] && !cmd.error) {
+        output[1] = 'no output\n'
+      }
+      output = output.join('\n')
+      msg[index] = `${output.trim()}\n${cmd.error ? `${cmd.error.message.trim()}` : ''}`
+    }
+    let heading = `${msg.join('\n\n')}\n`
+    if (heading.trim()) {
+      heading += '\n'
+    }
+    log(heading + table(result) + '\n')
+    return cmd
+  })
 
-	/**
-	 * Running test for each version of node
-	 */
-	const res = yield nodeVersions.map((v, index) => {
-		return execTest(`. ~/.nvm/nvm.sh && nvm exec ${v} ${testScript}`, index, v)
-	})
+  /**
+   * Running test for each version of node
+   */
+  const res = yield nodeVersions.map((v, index) => {
+    return execTest(`. ~/.nvm/nvm.sh && nvm exec ${v} ${testScript}`, index, v)
+  })
 
-	updateBadge(res)
+  updateBadge(res)
 }).catch(e => {
-	log.clear()
-	console.log(e.stack)
-	updateBadge(1)
+  log.clear()
+  console.log(e.stack)
+  updateBadge(1)
 })

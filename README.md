@@ -1,7 +1,8 @@
-# testen [![NPM version](https://img.shields.io/npm/v/testen.svg)](https://npmjs.com/package/testen) [![NPM downloads](https://img.shields.io/npm/dm/testen.svg)](https://npmjs.com/package/testen) ![testen badge](https://img.shields.io/badge/testen-passing-brightgreen.svg)
+# testen [![NPM version](https://img.shields.io/npm/v/testen.svg)](https://npmjs.com/package/testen) [![NPM downloads](https://img.shields.io/npm/dm/testen.svg)](https://npmjs.com/package/testen) [![testen badge](https://img.shields.io/badge/testen-passing-brightgreen.svg)][testen repo]
+
+[testen repo]: https://github.com/egoist/testen
 
 Run tests for multiple versions of Node.js in local env.  
-Automatically update testen badge in your README after running tests.
 
 ![preview](https://ooo.0o0.ooo/2016/03/16/56ea13547a18b.gif)
 
@@ -49,7 +50,7 @@ $ testen -n 0.10 -n 0.12
 
 **Auto-update badge**
 
-Add `![testen badge]()` to your `README.md` and it will automatically update the badge after running each test. Use `--disable-badge` or remove that mark to disable this behavior.
+Run `testen` and you will know how to do this.
 
 ## CLI
 
