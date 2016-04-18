@@ -4,7 +4,7 @@
 
 Run tests for multiple versions of Node.js in local env.  
 
-![preview](https://ooo.0o0.ooo/2016/03/16/56ea13547a18b.gif)
+![preview](https://ooo.0o0.ooo/2016/04/17/571460f682122.gif)
 
 ## Install
 
