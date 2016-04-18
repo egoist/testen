@@ -178,10 +178,10 @@ co(function* main () {
     const defaultNodeVersion = yield exec('node -v')
     nodeVersions = [defaultNodeVersion.stdout.trim().substr(1)]
   } else if (cli.node === undefined) {
-    nodeVersions = travisOrCircle()
+    nodeVersions = travisOrCircle() || []
   }
   nodeVersions = nodeVersions.concat(cli.node || [])
-  if (!nodeVersions && typeof nodeVersions !== 'number') {
+  if ((!nodeVersions || nodeVersions.length === 0) && typeof nodeVersions !== 'number') {
     const pkgNodeVersion = localPkg.testen && localPkg.testen.node
     if (pkgNodeVersion && pkgNodeVersion.length > 0) {
       nodeVersions = pkgNodeVersion
