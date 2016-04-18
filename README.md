@@ -63,10 +63,11 @@ $ testen --help
 
 Usage:
 
-  --node/-n [version]:  Add a node version to test
+  -s/--system:          Use current node version
+  -n/--node [version]:  Add a node version to test
   -- [command]:         The test command you expect
   --disable-badge:      Disable auto-update testen badge
-  --verbose/V:          Always output everything
+  -V/--verbose:         Always output everything
                           ~ example: there are `console.log` in test
 ```
 
