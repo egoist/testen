@@ -26,6 +26,10 @@ Sometimes you wanna override these node versions, just pass `-n` to do this:
 
 ```bash
 $ testen -n 0.10 -n 0.12
+
+# use system default node version
+# -s/--system
+$ testen -s
 ```
 
 **Read Node.js versions from `package.json`**
