@@ -194,7 +194,7 @@ co(function* main () {
    * Generate initial result and log as table
    */
   const result = nodeVersions.map(v => {
-    return ['  ' + chalk.gray(figures.circle), v, chalk.gray('running')]
+    return ['  ' + chalk.gray(figures.circle), v, chalk.gray('running'), '']
   })
   log('\n' + table(result) + '\n')
 
@@ -203,11 +203,14 @@ co(function* main () {
    */
   let msg = []
   const execTest = co.wrap(function* (command, index, version) {
+    const startTime = Date.now()
     const cmd = yield exec(command)
+    const endTime = Date.now()
     result[index] = [
       '  ' + (cmd.error ? chalk.red(figures.cross) : chalk.green(figures.tick)),
       nodeVersions[index],
-      cmd.error ? chalk.red('failed') : chalk.green('success')
+      cmd.error ? chalk.red('failed') : chalk.green('success'),
+      `${endTime - startTime}ms`
     ]
     if (cmd && (cmd.error || cli.verbose)) {
       let output = cmd.stdout.toString().split('\n')
@@ -230,7 +233,7 @@ co(function* main () {
    * Running test for each version of node
    */
   const res = yield nodeVersions.map((v, index) => {
-    return execTest(`. ~/.nvm/nvm.sh && nvm exec ${v} ${testScript}`, index, v)
+    return execTest(`. ~/.nvm/nvm.sh && nvm exec ${v} ${testScript}`, index)
   })
 
   updateBadge(res)
