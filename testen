@@ -29,11 +29,13 @@ update({pkg}).notify()
 const cli = minimist(process.argv.slice(2), {
   '--': true,
   'alias': {
+    s: 'system',
     n: 'node',
     h: 'help',
     v: 'version',
     V: 'verbose'
-  }
+  },
+  'string': ['node']
 })
 /**
  * Print help
@@ -43,10 +45,11 @@ if (cli.help) {
     '',
     'Usage:',
     '',
-    '  --node/-n [version]:  Add a node version to test',
+    '  -s/--system:          Use current node version',
+    '  -n/--node [version]:  Add a node version to test',
     '  -- [command]:         The test command you expect',
     '  --disable-badge:      Disable auto-update testen badge',
-    '  --verbose/V:          Always output everything',
+    '  -V/--verbose:         Always output everything',
     '                          ~ example: there are `console.log` in test',
     ''
   ].join('\n'))
@@ -163,14 +166,21 @@ function versionCompare(left, right) {
   return 0
 }
 
-co(function* main () {
+co(function* main () {  
   /**
    * Get node versions from cli or .yml
    * If nothing got then read from package.json
-   * It still nothing, use preset versions
+   * It still nothing, use default node verison or preset versions
    * Finally sort and arrayUnique
    */
-  let nodeVersions = cli.node === undefined ? travisOrCircle() : cli.node
+  let nodeVersions = []
+  if (cli.system) {
+    const defaultNodeVersion = yield exec('node -v')
+    nodeVersions = [defaultNodeVersion.stdout.trim().substr(1)]
+  } else if (cli.node === undefined) {
+    nodeVersions = travisOrCircle()
+  }
+  nodeVersions = nodeVersions.concat(cli.node || [])
   if (!nodeVersions && typeof nodeVersions !== 'number') {
     const pkgNodeVersion = localPkg.testen && localPkg.testen.node
     if (pkgNodeVersion && pkgNodeVersion.length > 0) {
