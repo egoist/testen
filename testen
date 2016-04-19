@@ -243,7 +243,7 @@ co(function* main () {
    * Running test for each version of node
    */
   const res = yield nodeVersions.map((v, index) => {
-    return execTest(`. ~/.nvm/nvm.sh && nvm exec ${v} ${testScript}`, index)
+    return execTest(`. ~/.nvm/nvm.sh && nvm exec ${v} ${testScript}`, index, v)
   })
 
   updateBadge(res)
