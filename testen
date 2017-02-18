@@ -48,7 +48,6 @@ if (cli.help) {
     '  -s/--system:          Use current node version',
     '  -n/--node [version]:  Add a node version to test',
     '  -- [command]:         The test command you expect',
-    '  --disable-badge:      Disable auto-update testen badge',
     '  -V/--verbose:         Always output everything',
     '                          ~ example: there are `console.log` in test',
     ''
@@ -104,43 +103,6 @@ function getStatus(res) {
 }
 
 /**
- * Update badge
- */
-function updateBadge(res) {
-  let finalStatus = 0
-  if (typeof res === 'number') {
-    finalStatus = res
-  } else if (Array.isArray(res)) {
-    finalStatus = getStatus(res)
-  }
-  if (!cli['disable-badge'] && pathExists.sync('./README.md')) {
-    const badge = finalStatus === 0 ?
-      'https://img.shields.io/badge/testen-passing-brightgreen.svg' :
-      'https://img.shields.io/badge/testen-failed-red.svg'
-    const re = /\!\[testen badge\]\(([^\)]*)\)/
-    let content = fs.readFileSync('./README.md', 'utf8')
-    if (re.test(content)) {
-      content = content.replace(
-        re,
-        `![testen badge](${badge})`
-      )
-      fs.writeFileSync('./README.md', content, 'utf8')
-    } else {
-      const box = `[![${chalk.magenta('testen badge')}](${chalk.green(badge)})][${chalk.green('testen repo')}]
-[${chalk.magenta('testen repo')}]: ${chalk.green('https://github.com/egoist/testen')}`
-      let badgeCode = indento(`Copy the following Markdown code to your README.
-Then testen will auto-update your testen badge.
-
-${box}
-      `, 2)
-      console.log(badgeCode)
-    }
-  }
-  spin.stop()
-  process.exit(finalStatus)
-}
-
-/**
  * Compare two version number
  * @param  {string} left
  * @param  {string} right
@@ -166,7 +128,7 @@ function versionCompare(left, right) {
   return 0
 }
 
-co(function* main () {  
+co(function* main () {
   /**
    * Get node versions from cli or .yml
    * If nothing got then read from package.json
@@ -242,13 +204,13 @@ co(function* main () {
   /**
    * Running test for each version of node
    */
-  const res = yield nodeVersions.map((v, index) => {
+  yield nodeVersions.map((v, index) => {
     return execTest(`. ~/.nvm/nvm.sh && nvm exec ${v} ${testScript}`, index, v)
   })
 
-  updateBadge(res)
+  spin.stop()
 }).catch(e => {
   log.clear()
   console.log(e.stack)
-  updateBadge(1)
+  spin.stop()
 })

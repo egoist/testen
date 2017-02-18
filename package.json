@@ -15,7 +15,7 @@
   },
   "scripts": {
     "test": "echo lol",
-    "testen": "testen"
+    "testen": "./testen"
   },
   "files": [
     "testen",

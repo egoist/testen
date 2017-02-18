@@ -1,4 +1,4 @@
-# testen [![NPM version](https://img.shields.io/npm/v/testen.svg)](https://npmjs.com/package/testen) [![NPM downloads](https://img.shields.io/npm/dm/testen.svg)](https://npmjs.com/package/testen) [![testen badge](https://img.shields.io/badge/testen-passing-brightgreen.svg)][testen repo]
+# testen [![NPM version](https://img.shields.io/npm/v/testen.svg)](https://npmjs.com/package/testen) [![NPM downloads](https://img.shields.io/npm/dm/testen.svg)](https://npmjs.com/package/testen)
 
 [testen repo]: https://github.com/egoist/testen
 
@@ -52,10 +52,6 @@ $ testen -s
 }
 ```
 
-**Auto-update badge**
-
-Run `testen` and you will know how to do this.
-
 ## CLI
 
 ```bash
@@ -66,7 +62,6 @@ Usage:
   -s/--system:          Use current node version
   -n/--node [version]:  Add a node version to test
   -- [command]:         The test command you expect
-  --disable-badge:      Disable auto-update testen badge
   -V/--verbose:         Always output everything
                           ~ example: there are `console.log` in test
 ```
