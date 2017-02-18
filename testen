@@ -184,11 +184,12 @@ co(function* main () {
       '  ' + (cmd.error ? chalk.red(figures.cross) : chalk.green(figures.tick)),
       nodeVersions[index],
       cmd.error ? chalk.red('failed') : chalk.green('success'),
-      `${endTime - startTime}ms`
+      chalk.dim(`${endTime - startTime}ms`)
     ]
     if (cmd && (cmd.error || cli.verbose)) {
       let output = cmd.stdout.toString().split('\n')
-      output[0] = chalk.bold(output[0] || chalk.red(`Node v${version} is not yet installed`))
+      const statusColor = cmd.error ? 'red' : 'green'
+      output[0] = chalk.bold[statusColor](output[0] || chalk.red(`Node v${version} is not yet installed`))
       if (!output[1] && !cmd.error) {
         output[1] = 'no output\n'
       }
