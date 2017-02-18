@@ -305,6 +305,10 @@ is-fullwidth-code-point@^1.0.0:
   dependencies:
     number-is-nan "^1.0.0"
 
+is-fullwidth-code-point@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.npmjs.org/is-fullwidth-code-point/-/is-fullwidth-code-point-2.0.0.tgz#a3b30a5c4f199183167aaab93beefae3ddfb654f"
+
 is-npm@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/is-npm/-/is-npm-1.0.0.tgz#f2fb63a65e4905b406c86072765a1a4dc793b9f4"
@@ -554,6 +558,13 @@ string-width@^1.0.1:
   dependencies:
     code-point-at "^1.0.0"
     is-fullwidth-code-point "^1.0.0"
+    strip-ansi "^3.0.0"
+
+string-width@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.npmjs.org/string-width/-/string-width-2.0.0.tgz#635c5436cc72a6e0c387ceca278d4e2eec52687e"
+  dependencies:
+    is-fullwidth-code-point "^2.0.0"
     strip-ansi "^3.0.0"
 
 string_decoder@~0.10.x:

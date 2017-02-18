@@ -11,7 +11,7 @@ const chalk = require('chalk')
 const pathExists = require('path-exists')
 const figures = require('figures')
 const log = require('log-update')
-const table = require('text-table')
+const textTable = require('text-table')
 const co = require('co')
 const exec = require('then-exec')
 const arrayUnique = require('array-unique')
@@ -20,8 +20,11 @@ const travisOrCircle = require('travis-or-circle')
 const boxen = require('boxen')
 const indento = require('indento')
 const series = require('promise.series')
+const stringWidth = require('string-width')
 const pkg = require('./package')
 const presetVersions = require('./lib/preset-versions')
+
+const table = result => textTable(result, {stringLength: stringWidth})
 
 const spin = new Hinata({char: '●', text: '  ', prepend: true, spacing: 1})
 
@@ -168,7 +171,7 @@ co(function* main () {
    * Generate initial result and log as table
    */
   const result = nodeVersions.map(v => {
-    return ['  ' + chalk.dim(figures.circle), v, chalk.dim('running'), '']
+    return ['  ' + chalk.dim(figures.circle), v, chalk.dim('pending'), '']
   })
   log('\n' + table(result) + '\n')
 
@@ -177,6 +180,8 @@ co(function* main () {
    */
   let msg = []
   const execTest = co.wrap(function* (command, index, version) {
+    result[index][2] = 'running'
+    log('\n' + table(result) + '\n')
     const startTime = Date.now()
     const cmd = yield exec(command)
     const endTime = Date.now()
