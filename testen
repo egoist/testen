@@ -168,7 +168,7 @@ co(function* main () {
    * Generate initial result and log as table
    */
   const result = nodeVersions.map(v => {
-    return ['  ' + chalk.gray(figures.circle), v, chalk.gray('running'), '']
+    return ['  ' + chalk.dim(figures.circle), v, chalk.dim('running'), '']
   })
   log('\n' + table(result) + '\n')
 
