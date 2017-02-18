@@ -30,7 +30,7 @@
     "nvm"
   ],
   "dependencies": {
-    "array-unique": "^0.2.1",
+    "array-unique": "^0.3.2",
     "chalk": "^1.1.1",
     "co": "^4.6.0",
     "figures": "^1.4.0",
