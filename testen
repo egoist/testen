@@ -19,6 +19,7 @@ const Hinata = require('hinata')
 const travisOrCircle = require('travis-or-circle')
 const boxen = require('boxen')
 const indento = require('indento')
+const series = require('promise.series')
 const pkg = require('./package')
 const presetVersions = require('./lib/preset-versions')
 
@@ -29,7 +30,7 @@ update({pkg}).notify()
 const cli = minimist(process.argv.slice(2), {
   '--': true,
   'alias': {
-    s: 'system',
+    s: 'sequence',
     n: 'node',
     h: 'help',
     v: 'version',
@@ -45,8 +46,9 @@ if (cli.help) {
     '',
     'Usage:',
     '',
-    '  -s/--system:          Use current node version',
+    '  --system:             Use current node version',
     '  -n/--node [version]:  Add a node version to test',
+    '  -s, --sequence:       Run tests in sequence',
     '  -- [command]:         The test command you expect',
     '  -V/--verbose:         Always output everything',
     '                          ~ example: there are `console.log` in test',
@@ -204,9 +206,14 @@ co(function* main () {
   /**
    * Running test for each version of node
    */
-  yield nodeVersions.map((v, index) => {
+  const handler = (v, index) => {
     return execTest(`. ~/.nvm/nvm.sh && nvm exec ${v} ${testScript}`, index, v)
-  })
+  }
+  const tasks = cli.sequence ? series(nodeVersions.map((v, index) => {
+    return () => handler(v, index)
+  })) : Promise.all(nodeVersions.map(handler))
+
+  yield tasks
 
   spin.stop()
 }).catch(e => {

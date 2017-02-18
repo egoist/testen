@@ -28,8 +28,7 @@ Sometimes you wanna override these node versions, just pass `-n` to do this:
 $ testen -n 0.10 -n 0.12
 
 # use system default node version
-# -s/--system
-$ testen -s
+$ testen --system
 ```
 
 **Read Node.js versions from `package.json`**
@@ -59,8 +58,9 @@ $ testen --help
 
 Usage:
 
-  -s/--system:          Use current node version
+  --system:             Use current node version
   -n/--node [version]:  Add a node version to test
+  -s, --sequence:       Run tests in sequence
   -- [command]:         The test command you expect
   -V/--verbose:         Always output everything
                           ~ example: there are `console.log` in test

@@ -39,6 +39,7 @@
     "log-update": "^1.0.2",
     "minimist": "^1.2.0",
     "path-exists": "^3.0.0",
+    "promise.series": "^0.1.0",
     "semver": "^5.1.0",
     "text-table": "^0.2.0",
     "then-exec": "0.0.1",
