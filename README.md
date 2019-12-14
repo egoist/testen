@@ -1,3 +1,5 @@
+👉 This project is now maintained over at [`bevry/testen`](https://github.com/bevry/testen) 👈
+
 # testen [![NPM version](https://img.shields.io/npm/v/testen.svg)](https://npmjs.com/package/testen) [![NPM downloads](https://img.shields.io/npm/dm/testen.svg)](https://npmjs.com/package/testen)
 
 [testen repo]: https://github.com/egoist/testen
